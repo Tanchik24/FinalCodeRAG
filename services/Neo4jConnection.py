@@ -37,6 +37,17 @@ class Neo4jConnection:
             result = session.run(query, params)
             return list(result)
 
+    def run_write_many(self, queries: list[tuple[str, dict[str, Any]]]) -> None:
+        if not queries:
+            return
+
+        with self._driver.session(database=self._database) as session:
+            def work(tx):
+                for query, params in queries:
+                    tx.run(query, params)
+
+            session.execute_write(work)
+
     @staticmethod
     def current_timestamp() -> str:
         return datetime.now(UTC).isoformat()

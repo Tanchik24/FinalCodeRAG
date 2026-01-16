@@ -90,6 +90,8 @@ class Neo4jIngestor:
 
         logger.debug(f"Flushing {len(self.node_buffer)} nodes to Neo4j")
 
+        queries: list[tuple[str, dict[str, Any]]] = []
+
         for label, props in self.node_buffer:
             unique_prop = self.unique_constraints.get(label)
 
@@ -109,8 +111,9 @@ class Neo4jIngestor:
                 """
                 params = {"props": props}
 
-            self._conn.run(query, params)
+            queries.append((query, params))
 
+        self._conn.run_write_many(queries)
         self.node_buffer.clear()
 
 
@@ -139,6 +142,8 @@ class Neo4jIngestor:
 
         logger.debug(f"Flushing {len(self.relationship_buffer)} relationships to Neo4j")
 
+        queries: list[tuple[str, dict[str, Any]]] = []
+
         for (start_label, start_props), rel_type, (end_label, end_props), rel_props in self.relationship_buffer:
             start_key = self.unique_constraints.get(start_label)
             end_key = self.unique_constraints.get(end_label)
@@ -156,8 +161,9 @@ class Neo4jIngestor:
                 "rel_props": rel_props or {},
             }
 
-            self._conn.run(query, params)
+            queries.append((query, params))
 
+        self._conn.run_write_many(queries)
         self.relationship_buffer.clear()
 
 

@@ -8,11 +8,8 @@ from typing import Any, Dict, List, Optional
 from langchain_core.tools import StructuredTool
 from langgraph.prebuilt import create_react_agent
 from langchain_mistralai import ChatMistralAI
-
-try:
-    from langgraph.checkpoint.memory import InMemorySaver as InMemoryCheckpointer
-except Exception:
-    from langgraph.checkpoint.memory import MemorySaver as InMemoryCheckpointer  
+from langgraph.checkpoint.memory import InMemorySaver as InMemoryCheckpointer
+  
 from app.config import get_config
 
 cfg_llm = get_config().llm
@@ -166,8 +163,6 @@ class SemanticSearchToolBackend:
 
         try:
             hits = self._embedder.search_question(question_text=query_text, top_k=effective_top_k)
-        except TypeError:
-            hits = self._embedder.search_question(query_text, effective_top_k)
         except Exception as exc:
             return _dump_json_limited(
                 {"ok": False, "error": f"semantic_search error: {exc}", "hits": []},
@@ -282,8 +277,6 @@ class CodeRepositoryLangGraphAgent:
                 description="Read repository file by line range (1-based, inclusive). Returns JSON with exact text.",
             ),
         ]
-
-        
 
         chat_model = ChatMistralAI(
             model=str(configuration.mistral_model_name),

@@ -52,8 +52,8 @@ def api_post(path: str, json: dict | None = None, timeout: int = 300) -> dict:
 def _history_dicts_to_messages(hist: list[dict]) -> list:
     out = []
     for m in hist or []:
-        role = str(m.get("role") or m.get("type") or m.get("sender") or "").strip().lower()
-        content = str(m.get("content") or m.get("message") or m.get("text") or "")
+        role = str(m.get("role") or "").strip().lower()
+        content = str(m.get("content") or  "")
         if not content.strip():
             continue
         if role == "user":

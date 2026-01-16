@@ -19,7 +19,7 @@ logger = get_logger()
 
 @dataclass(frozen=True)
 class RepositoryEmbeddingConfig:
-    dense_model_name: str = "jinaai/jina-embeddings-v2-base-code"
+    dense_model_name: str = "BAAI/bge-small-en-v1.5"
     sparse_model_name: str = ""
     use_cuda: bool = True
     indexing_batch_size: int = 4
@@ -48,17 +48,14 @@ class CodeEmbeddingsGenerator:
 
         self.project_name = (project_name or "").strip() or None
 
-        self.qdrant_client: QdrantClient = (
-            embeddings_store._ensure_client() if hasattr(embeddings_store, "_ensure_client") else embeddings_store
-        )
+        self.qdrant_client: QdrantClient = (embeddings_store._ensure_client())
         self.collection_name: str = getattr(embeddings_store, "collection_name", None) or "code_embeddings"
 
         self._using_vector_name: Optional[str] = None
-        if hasattr(embeddings_store, "ensure_default_vector_name"):
-            try:
-                self._using_vector_name = embeddings_store.ensure_default_vector_name()
-            except Exception:
-                self._using_vector_name = None
+        try:
+            self._using_vector_name = embeddings_store.ensure_default_vector_name()
+        except Exception:
+            self._using_vector_name = None
 
         if hasattr(self.qdrant_client, "set_model"):
             self.qdrant_client.set_model(self.config.dense_model_name, cuda=bool(self.config.use_cuda))
@@ -222,7 +219,7 @@ class CodeEmbeddingsGenerator:
 
         if not hasattr(self.qdrant_client, "get_fastembed_vector_params"):
             raise RuntimeError(
-                "qdrant-client is missing fastembed integration: get_fastembed_vector_params() not available. "
+                "qdrant-client is missing fastembed integration: get_fastembed_vector_params() not available"
                 "Install fastembed or use a qdrant-client build that includes it."
             )
 
@@ -259,11 +256,7 @@ class CodeEmbeddingsGenerator:
         return None
 
     def _make_document(self, text: str) -> Any:
-        try:
-            return qm.Document(text=text, model=self.config.dense_model_name)
-        except Exception:
-            return qm.Document(text=text)
-
+        return qm.Document(text=text, model=self.config.dense_model_name)
 
     def _count_entities(self) -> int:
         if self.project_name:

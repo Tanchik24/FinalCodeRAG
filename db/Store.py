@@ -56,7 +56,6 @@ class SQLiteStoreSA:
             s.execute(update(Repo).where(Repo.id == int(repo_id)).values(is_indexed=bool(is_indexed)))
             s.commit()
 
-
     def get_or_create_user(self, user_id: str, repo_id: int) -> User:
         with self.Session() as s:
             user = s.get(User, user_id)
