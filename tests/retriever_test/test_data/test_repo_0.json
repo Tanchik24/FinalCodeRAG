@@ -1,0 +1,64 @@
+{
+  "url": "https://github.com/huggingface/pytorch-image-models",
+  "retrieval_questions": [
+    {
+      "query": "Где реализована функция create_model, которая принимает строковое имя модели и создаёт нужную модель?",
+      "gold_paths": ["timm/models/_factory.py"],
+      "gold_full_names": ["pytorch-image-models.timm.models._factory.create_model"]
+    },
+    {
+      "query": "Где находится функция, которая парсит строковое имя модели перед созданием (например parse_model_name/разбор source/tag)?",
+      "gold_paths": ["timm/models/_factory.py"],
+      "gold_full_names": ["pytorch-image-models.timm.models._factory.parse_model_name"]
+    },
+    {
+      "query": "Где определён register_model — механизм регистрации моделей в реестре, чтобы их находил create_model?",
+      "gold_paths": ["timm/models/_registry.py"],
+      "gold_full_names": ["pytorch-image-models.timm.models._registry.register_model"]
+    },
+    {
+      "query": "Где реализована функция list_models (или аналог), которая возвращает список доступных моделей из реестра?",
+      "gold_paths": ["timm/models/_registry.py"],
+      "gold_full_names": ["pytorch-image-models.timm.models._registry.list_models"]
+    },
+    {
+      "query": "Где реализована фабрика датасетов create_dataset, которая по аргументам собирает нужный Dataset?",
+      "gold_paths": ["timm/data/dataset_factory.py"],
+      "gold_full_names": ["pytorch-image-models.timm.data.dataset_factory.create_dataset"]
+    },
+    {
+      "query": "Где реализована фабрика DataLoader create_loader, которая собирает лоадер и применяет настройки батча/аугментаций?",
+      "gold_paths": ["timm/data/loader.py"],
+      "gold_full_names": ["pytorch-image-models.timm.data.loader.create_loader"]
+    },
+    {
+      "query": "Где реализована функция resolve_data_config, которая вычисляет data_config (input_size/mean/std/interpolation и т.п.)?",
+      "gold_paths": ["timm/data/config.py"],
+      "gold_full_names": ["pytorch-image-models.timm.data.config.resolve_data_config"]
+    },
+    {
+      "query": "Где реализованы MixUp/CutMix: класс Mixup и функция mixup_target (генерация смешанных таргетов)?",
+      "gold_paths": ["timm/data/mixup.py"],
+      "gold_full_names": [
+        "pytorch-image-models.timm.data.mixup.Mixup",
+        "pytorch-image-models.timm.data.mixup.mixup_target"
+      ]
+    },
+    {
+      "query": "Где определены классы лоссов SoftTargetCrossEntropy и LabelSmoothingCrossEntropy?",
+      "gold_paths": ["timm/loss/cross_entropy.py"],
+      "gold_full_names": [
+        "pytorch-image-models.timm.loss.cross_entropy.SoftTargetCrossEntropy",
+        "pytorch-image-models.timm.loss.cross_entropy.LabelSmoothingCrossEntropy"
+      ]
+    },
+    {
+      "query": "Где реализованы лоссы JsdCrossEntropy и AsymmetricLossMultiLabel?",
+      "gold_paths": ["timm/loss/jsd.py", "timm/loss/asymmetric_loss.py"],
+      "gold_full_names": [
+        "pytorch-image-models.timm.loss.jsd.JsdCrossEntropy",
+        "pytorch-image-models.timm.loss.asymmetric_loss.AsymmetricLossMultiLabel"
+      ]
+    }
+  ]
+}
