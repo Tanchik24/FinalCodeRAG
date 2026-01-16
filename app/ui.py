@@ -153,7 +153,7 @@ def render_chat_page() -> None:
         st.warning("No repository selected yet. Go back and enter a GitHub URL.")
         return
 
-    col_a, col_b = st.columns(2)
+    col_a, col_b, _spacer = st.columns([1, 1, 8], gap="small")
     with col_a:
         if st.button("🔄 Refresh history"):
             try:
