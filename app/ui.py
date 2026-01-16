@@ -15,6 +15,34 @@ from langchain.messages import HumanMessage, AIMessage
 config = get_config().api
 
 
+def render_answer_feedback(answer_id: str) -> None:
+    if answer_id in st.session_state.feedback:
+        fb = st.session_state.feedback[answer_id]
+        st.caption(f"✅ Оценка сохранена: {fb['rating']}/5 ({fb['bucket']})")
+        return
+
+    with st.form(key=f"feedback_{answer_id}", clear_on_submit=True):
+        rating = st.select_slider(
+            "Оценка ответа (1 — плохо, 5 — отлично)",
+            options=[1, 2, 3, 4, 5],
+            value=4,
+        )
+
+        bucket = "очень полезно" if rating == 5 else ("полезно" if rating == 4 else "не полезно")
+        st.caption(f"Категория: **{bucket}**")
+
+        comment = st.text_input("Комментарий (опционально)")
+
+        if st.form_submit_button("Отправить оценку"):
+            st.session_state.feedback[answer_id] = {
+                "rating": int(rating),
+                "bucket": bucket,
+                "comment": comment,
+            }
+            st.success("Спасибо! Оценка сохранена.")
+            st.rerun()
+
+
 def _get_api_session() -> requests.Session:
     if "api_session" not in st.session_state:
         st.session_state.api_session = requests.Session()
@@ -171,10 +199,15 @@ def render_chat_page() -> None:
             except Exception as e:
                 st.error(f"Clear failed: {e}")
 
-    for message in st.session_state.chat_history:
+    for i, message in enumerate(st.session_state.chat_history):
         role = "user" if isinstance(message, HumanMessage) else "assistant"
         with st.chat_message(role):
             st.markdown(message.content)
+
+        if role == "assistant" and str(message.content).strip():
+            answer_id = f"{int(repo_id)}:{i}" 
+            render_answer_feedback(answer_id)
+
 
     if "pending_retry" in st.session_state:
         st.error(st.session_state.pending_retry["error_display"])
@@ -264,6 +297,7 @@ def init_ui(app_config=None, llm_config=None, secrets=None) -> None:
     st.session_state.current_page = "main"
 
     st.session_state.app_is_inited = True
+    st.session_state.feedback = {}
 
 
 def run_app() -> None:
