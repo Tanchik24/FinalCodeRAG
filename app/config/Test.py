@@ -11,6 +11,6 @@ class Test(BaseSettings):
     )
 
     questions_path: str = Field("load_test/questions.json")
-    repo_id: int = Field(0)
+    repo_id: int = Field(1)
     think_min: float = Field(0.2)
     think_max: float = Field(0.6)
